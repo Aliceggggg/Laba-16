@@ -1,0 +1,74 @@
+#include <iostream>
+#include <queue>
+#include <Windows.h>
+using namespace std;
+
+class Node
+{
+public:
+    int x;
+    Node* next;
+};
+
+typedef Node* Pnode;
+
+void Show(Pnode& p1) {
+    Pnode MyNode = p1;
+    while (MyNode != NULL)
+    {
+        cout << MyNode->x << " ";
+        MyNode = MyNode->next;
+    }
+}
+
+
+void Add_after(Pnode p, int data) {
+    Pnode temp = new Node;
+    temp->x = data;
+    temp->next = p->next;
+    p->next = temp;
+}
+
+void Add(int data, Pnode& p1, Pnode& p2)
+{
+    Pnode temp;
+    if (p1 == NULL) {
+        p1 = new Node;
+        p2 = p1;
+        p1->next = NULL;
+    }
+    else {
+        temp = new Node;
+        p2->next = temp;
+        p2 = temp;
+        p2->next = NULL;
+    }
+    p2->x = data;
+}
+
+
+int main() {
+    SetConsoleOutputCP(CP_UTF8);
+    setlocale(LC_ALL, "Russian");
+    queue<int> q1;
+    queue<int> q2;
+
+    q1.push(1); q1.push(3); q1.push(5);
+    q2.push(2); q2.push(4); q2.push(6);
+
+    queue<int> ans;
+
+    while (!q2.empty() or !q1.empty()) {
+        if (!q1.empty()) {
+            ans.push(q1.front());
+            q1.pop();
+        }
+        if (!q2.empty()) {
+            ans.push(q2.front());
+            q2.pop();
+        }
+    }
+
+    cout << "Указатель на первый элемент: " << &ans.front() << endl;
+    cout << "Указатель на последний элемент: " << &ans.back();
+}
