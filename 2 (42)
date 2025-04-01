@@ -1,0 +1,101 @@
+#include <iostream>
+#include <Windows.h>
+#include <fstream>
+using namespace std;
+
+class Node {
+public:
+    Node* prev;
+    int x;
+    Node* next;
+};
+
+typedef Node* Pnode;
+
+void Show(Pnode p1) {
+    if (!p1) return;
+
+    Pnode current = p1;
+    do {
+        cout << current->x << " ";
+        current = current->next;
+    } while (current != p1);
+    cout << endl;
+}
+
+
+void Delete(Pnode& Head, Pnode& Tail, Pnode OldNode) {
+    if (!Head or !OldNode) return;
+    Pnode k = OldNode->next;
+
+    if (Head == OldNode and Head->next == Head) {
+        delete Head;
+        Head = Tail = nullptr;
+        return;
+    }
+
+    if (Head == OldNode) {
+        Head = Head->next;
+        Tail->next = Head;
+    }
+
+    if (OldNode == Tail) {
+        Tail = Tail->prev;
+        Head->prev = Tail;
+    } 
+
+    OldNode->next->prev = OldNode->prev;
+    OldNode->prev->next = OldNode->next;
+
+    delete OldNode;
+}
+
+void Add(int data, Pnode& p1, Pnode& p2) {
+    Pnode temp = new Node;
+    temp->x = data;
+
+    if (p1 == NULL) {
+        p1 = temp;
+        p1->next = p1;
+        p1->prev = p1;
+        p2 = p1;
+    }
+    else {
+        p2->next = temp;
+        temp->next = p1;
+        p1->prev = temp;
+        temp->prev = p2;
+        p2 = temp;
+    }
+}
+
+int main() {
+    SetConsoleOutputCP(CP_UTF8);
+    setlocale(LC_ALL, "Russian");
+    ofstream file("a.txt");
+
+    Pnode p1 = NULL, p2 = NULL;
+    int n;
+
+    cout << "Введите 5 чисел для списка: ";
+    for (int i = 0; i < 5; i++) {
+        cin >> n;
+        Add(n, p1, p2);
+    }
+
+    Pnode p11 = p1;
+
+    cout << "Удаляемые элементы: ";
+    while (p11 and p11->next != p11) {
+        if (p11->prev->x == p11->next->x) {
+            Pnode del = p11;
+            cout << del->x << " ";
+            p11 = del->next;
+            Delete(p1, p2, del);
+        } else 
+            p11 = p11->next;
+    }
+
+    cout << endl << "Указатель на последний элемент: " << p11 << ", его значение: " << p11->x;
+
+}
