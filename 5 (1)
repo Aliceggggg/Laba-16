@@ -1,0 +1,116 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <Windows.h>
+using namespace std;
+
+class Node {
+public:
+    string x;
+    Node* prev;
+    Node* next;
+};
+
+typedef Node* Pnode;
+
+// Функция для добавления символа в двусвязный список
+void Add(const string& c, Pnode& p1, Pnode& p2) {
+    Pnode temp = new Node;
+    temp->x = c;
+
+    if (p1 == NULL) {
+        p1 = temp;
+        p1->next = p1;
+        p1->prev = p1;
+        p2 = p1;
+    }
+    else {
+        p2->next = temp;
+        temp->next = p1;
+        p1->prev = temp;
+        temp->prev = p2;
+        p2 = temp;
+    }
+}
+
+// Функция для отображения списка
+void Show(Pnode Head, int word) {
+    Pnode current = Head;
+    int count = 0;
+    while (count != word) {
+        count++;
+        cout << current->x << " ";
+        current = current->next;
+    }
+    cout << endl;
+}
+
+void Delete(Pnode& Head, Pnode& Tail, Pnode OldNode) {
+    if (!Head or !OldNode) return;
+    Pnode k = OldNode->next;
+
+    if (Head == OldNode and Head->next == Head) {
+        delete Head;
+        Head = Tail = nullptr;
+        return;
+    }
+
+    if (Head == OldNode) {
+        Head = Head->next;
+        Tail->next = Head;
+    }
+
+    if (OldNode == Tail) {
+        Tail = Tail->prev;
+        Head->prev = Tail;
+    }
+
+    OldNode->next->prev = OldNode->prev;
+    OldNode->prev->next = OldNode->next;
+
+    delete OldNode;
+}
+
+
+int main() {
+    SetConsoleOutputCP(CP_UTF8);
+    setlocale(LC_ALL, "Russian");
+    ifstream file("ab.txt"); 
+    ofstream file1("ba.txt");
+
+    string str;
+    Pnode p1 = nullptr, p2 = nullptr;
+
+    int word; file >> word;
+    file.ignore();
+
+    while (getline(file, str)) { 
+        Add(str, p1, p2);
+    }
+
+    cout << "Порядок девочек: ";
+    Show(p1,5);
+
+    Pnode p11 = p1;
+    int count = 1;
+    
+    cout << "Порядок выбывших: ";
+    while (p11) {
+        if (count == word) {
+            Pnode del = p11;
+            cout << del->x << " ";
+            file1 << del->x;
+            p11 = del->next;
+            Delete(p1, p2, del);
+            count = 1;
+        }
+        else {
+            p11 = p11->next;
+            count++;
+        }
+    }
+
+
+    file1.close();
+    file.close(); 
+}
