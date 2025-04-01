@@ -1,0 +1,180 @@
+#include <iostream>
+#include <Windows.h>
+#include <fstream>
+using namespace std;
+
+//int main() {
+//    SetConsoleOutputCP(CP_UTF8);
+//    setlocale(LC_ALL, "Russian");
+//    ofstream file("a.txt");
+//    Pnode p1 = NULL, p2 = NULL;
+//    int n;
+
+    //cout << "Введите 10 чисел для списка: ";
+    //for (int i = 0; i < 10; i++) {
+    //    cin >> n;
+    //    Add(n, p1, p2);
+    //}
+
+    //p2->next = p1;
+
+    ////cout << p1->x << " ";
+    ////file << p1->x << " ";
+    //int count = 0;
+    //Pnode p = p1;
+    //Pnode del = p1;
+    ////Delete(p1, p);
+    ////p1 = del->next;
+
+    //while (p != NULL or p1->next != p1) {
+    //    if (count != 2) {
+ /*           count++;
+            p = p->next;
+        }
+        else {
+            count = 0;
+            file << p->x;
+            cout << p->x << " ";
+            del = p->next;
+            Delete(p1, p);
+            p = del;
+        }
+    }
+
+    file.close();
+
+    cout << endl << "Данные записаны в файл" << endl;
+
+}*/
+
+
+
+
+
+
+#include <iostream>
+#include <Windows.h>
+#include <fstream>
+
+using namespace std;
+
+class Node {
+public:
+    int x;
+    Node* next;
+};
+
+typedef Node* Pnode;
+
+void Show(Pnode p1) {
+    if (!p1) return;  
+
+    Pnode current = p1;
+    do {
+        cout << current->x << " ";
+        current = current->next;
+    } while (current != p1);
+    cout << endl;
+}
+
+
+void Delete(Pnode& Head, Pnode& Tail, Pnode OldNode) {
+    if (!Head || !OldNode) return;  
+
+    if (Head == OldNode && Head->next == Head) {  
+        delete Head;
+        Head = Tail = nullptr;
+        return;
+    }
+
+    if (Head == OldNode) {  
+        Head = Head->next;
+        Tail->next = Head;
+    }
+    else {
+        Pnode prev = Head;
+        while (prev->next != OldNode) {  
+            prev = prev->next;
+        }
+        prev->next = OldNode->next;
+
+        if (Tail == OldNode) {  
+            Tail = prev;
+        }
+    }
+
+    delete OldNode;
+}
+
+void Add(int data, Pnode& p1, Pnode& p2) {
+    Pnode temp = new Node;
+    temp->x = data;
+
+    if (p1 == NULL) {
+        p1 = temp;
+        p1->next = p1;  
+        p2 = p1;
+    }
+    else {
+        p2->next = temp;
+        temp->next = p1;
+        p2 = temp;
+    }
+}
+
+int main() {
+    SetConsoleOutputCP(CP_UTF8);
+    setlocale(LC_ALL, "Russian");
+    ofstream file("a.txt");
+
+    if (!file) {
+        cerr << "Ошибка открытия файла!" << endl;
+        return 1;
+    }
+
+    Pnode p1 = NULL, p2 = NULL;
+    int n;
+
+    cout << "Введите 10 чисел для списка: ";
+    for (int i = 0; i < 10; i++) {
+        cin >> n;
+        Add(n, p1, p2);
+    }
+
+    cout << "Исходный список: ";
+    Show(p1);
+
+    /*Pnode temp = p1;
+    do {
+        file << temp->x << " ";
+        temp = temp->next;
+    } while (temp != p1);
+    file << endl;*/
+
+    cout << "Порядок удаления элементов: ";
+    cout << p1->x << " ";
+    file << p1->x << " ";
+    Delete(p1, p2, p1);
+
+    int count = 1;
+    Pnode p11 = p1;
+    Pnode prev = p2;
+
+    while (p1 or p1->next != p1) { 
+        if (count == 3) {  
+            Pnode del = p11;
+            cout << del->x << " ";
+            file << del->x << " ";
+            p11 = p11->next;
+            Delete(p1, p2, del);
+            count = 1; 
+        }
+        else {
+            prev = p11;
+            p11 = p11->next;
+            count++;
+        }
+    }
+
+    file.close();
+}
